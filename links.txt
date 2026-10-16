@@ -1,0 +1,82 @@
+# Baby registry links — one per line. Lines starting with # are ignored.
+#
+# - Poshmark listing links: each one becomes a registry item.
+# - thredUP shared-favorites links (thredup.com/fv/...): every item on that
+#   wishlist is pulled in, and new favorites show up automatically.
+#
+# Sold / unavailable items drop off the registry on their own. To remove
+# something manually, delete its line (or un-favorite it on thredUP).
+
+# thredUP wishlist
+https://www.thredup.com/fv/01M50PTXWQAWSKHTPGCZACBHV0
+
+# Poshmark
+https://poshmark.com/listing/Seraphine-Maternity-Winter-Coat-with-Detachable-Panel-6ac94cfedb94209866d9eed3
+https://poshmark.com/listing/The-North-Face-Purple-Rainbow-Motif-Camp-Cap-69f0624a310f1c1557b55fdf
+https://poshmark.com/listing/The-North-FaceBlue-Baby-Winter-Hat-6a5ac6efd507464d8b3897d7
+https://poshmark.com/listing/The-North-Face-Littles-Suave-Oso-Mitt-Size-XS1224m-Fleece-Mittens-Baby-Winter-6a9b0def29572dedc1c77439
+https://poshmark.com/listing/The-North-Face-Littles-Mossbud-Swirl-Mitt-Toddler-6a9d5341b3acde5c1855ca70
+https://poshmark.com/listing/The-North-Face-Baby-Glacier-Mitt-Black-Fleece-Infant-Mittens-06M-NWT-6ac7c8af32f934a1a97c43a0
+https://poshmark.com/listing/The-north-face-swim-trunks-66abe588b9db3aa9f65c3a8c
+https://poshmark.com/listing/The-North-Face-Kids-OceanInspired-Swim-Shorts-687102b11b40a78b660cff35
+https://poshmark.com/listing/The-North-Face-Baby-Amphibious-Sun-OnePiece-NEW-WITH-TAGS-36-MTH-6a86de91e625d24ec0464dab
+https://poshmark.com/listing/The-North-Face-Baby-Amphibious-Sun-OnePiece-NEW-WITH-TAGS-03-MTH-6a86de7b5551aac4c31bb5d8
+https://poshmark.com/listing/The-North-Face-Baby-Amphibious-Sunswim-suit-size-03-months-NWT-692ccf2c4a072b4b48f616cc
+https://poshmark.com/listing/The-North-Face-Blue-550-Goose-Down-Infant-Snow-Suit-Baby-Boys-Size-36-Months-6acf9c949bca616b25768c8d
+https://poshmark.com/listing/Burts-Bees-Baby-Organic-Cotton-Pink-Dinosaur-Footed-OnePiece-with-Purple-Trim-6a1e40c6243dae3832654982
+https://poshmark.com/listing/Columbia-Blue-Baby-Snowsuit-36M-680e9825e9c77d2ed3511905
+https://poshmark.com/listing/Baby-Boden-Whale-Print-Footed-Sleeper-Cozy-36-Months-Cotton-6ad13a207e974954ffae65d5
+https://poshmark.com/listing/Columbia-Baby-Fleece-Bunting-03-Months-Blue-Geometric-Animal-Print-Hooded-Warm-6ac112241696a78289c2db16
+https://poshmark.com/listing/Columbia-Snowsuit-Blue-and-Gray-03M-One-Piece-Full-Zip-for-Infant-NWT-69138adeb09b7c72754f068b
+https://poshmark.com/listing/The-North-Face-Kids-Red-and-Navy-One-Piece-CHIMBORAZA-36-months-mid-weight-6a9cbf6ff61f814977a81ff6
+https://poshmark.com/listing/Hanna-Andersson-Romper-Baby-36M-Nature-Sleeveless-Snap-Cuff-White-6ab50311d78df1683740aac7
+https://poshmark.com/listing/COLUMBIA-FLEECE-LINED-DOWN-SNUGGLY-BUNNY-BUNTING-PINK-SIZE-O3-MONTHS-NWT-691f50aa9b2158035b988b24
+https://poshmark.com/listing/Hanna-Andersson-03-month-Blue-Construction-Print-OnePiece-Pajamas-6a7fb30bda3eeba617ab46e8
+https://poshmark.com/listing/Hanna-Andersson-Unisex-Blue-Overalls-size-36-Months-63e5cdf5abe6b28302e1f9df
+https://poshmark.com/listing/Cat-Jack-Little-Boy-Bundle-36-months-6ab4bfa372e624c70ba96934
+https://poshmark.com/listing/Cloud-Island-03M-Blue-Cloud-Fuzzy-Piece-Baby-Set-6aaccbd1da3eeb749da7e4a8
+https://poshmark.com/listing/Burts-Bees-Baby-organic-raised-terry-bee-take-me-home-3-piece-set-cloud-03M-69597fecb944916ba84ee136
+https://poshmark.com/listing/Hanna-Andersson-Blue-Footed-Pajamas-6acc310319212505f955317b
+https://poshmark.com/listing/Cozy-Cream-Hooded-Baby-One-Piece-69addd8324b20bcf4c7aaa33
+https://poshmark.com/listing/Cat-Jack-Turquoise-Yellow-Shirt-Shorts-Outfit-5fd904edb69e9e38e7113af0
+https://poshmark.com/listing/Hanna-Andersson-Rainbow-Elephant-Outfit-50cm-69dc2e37b3ef6278e56fb474
+https://poshmark.com/listing/Mini-Boden-Jersey-Short-Set-Blue-Stripe-Applique-Truck-03-Months-6a943f4606c773b370d4332f
+https://poshmark.com/listing/Cloud-Island-Baby-Boys-2-Piece-Outfit-Set-03-Months-6a6588ecfc6d1eb6cf6c1a18
+https://poshmark.com/listing/The-North-Face-Baby-Denali-OnePiece-Set-With-Mittens-And-Booties-6699996a0e5172958d7bb2a2
+https://poshmark.com/listing/Hanna-Andersson-Disney-Winnie-The-Pooh-Jogger-Sweatsuit-Set-Boy-60-36-Months-6ac021d31ae9003cbc7a4768
+https://poshmark.com/listing/Cat-Jack-Boys-36-M-Halloween-Milk-Monster-Shirt-Checkered-Jogger-Pants-Grey-6a90d6db29572dd5fd2b9580
+https://poshmark.com/listing/Hanna-Andersson-Cream-Long-Sleeve-Footie-Pants-Organic-Cotton-EUC-Sz-36-Mo-67340eeb842dd4e358859d54
+https://poshmark.com/listing/Black-Polka-Dot-Ribbed-Top-Leggings-Set-NB-Scandi-Baby-Going-Home-Euro-Summer-6a8cf9baf09fc8ec60f22b4e
+https://poshmark.com/listing/Cat-Jack-Baby-Boys-Hooded-OnePiece-Outfit-6-Months-6a9fa0827b0e8052c5e1cdce
+https://poshmark.com/listing/Blue-and-yellow-NEWBORN-bundle-6ac6851170333fb34e9c8541
+https://poshmark.com/listing/Cat-Jack-2-Piece-Short-Shirt-Skulls-NWT-03-Months-Baby-6ac5d26b23cd1e12c90f0094
+https://poshmark.com/listing/NWT-Hanna-Andersson-Baby-Blue-Penguin-2-Piece-Set-Sz-60-36M-Cotton-Outfit-6ad061cacf80051628c1a510
+https://poshmark.com/listing/CLOUD-ISLAND-Sweater-Set-Baby-36M-Tan-Excellent-Bear-Graphic-Knit-Outfit-6ac10d3a30122a61f02af3bb
+https://poshmark.com/listing/CLOUD-Island-2-Piece-03MO-Outfit-6843003660beaf2274446cf5
+https://poshmark.com/listing/Cloud-Island-Baby-Bunny-Carrot-TShirt-and-Bloomer-Outfit-Set-Tan-White-NWT-3M-6abd0ba2fa43c107d6a0bb33
+https://poshmark.com/listing/Cat-Jack-Turquoise-Baby-Tee-and-Patterned-Shorts-Set-6a0706b2b14a06d4d56c6899
+https://poshmark.com/listing/Cat-Jack-Baby-Outfit-with-Checkered-Top-and-Rust-Shorts-6aaab34f3ae6c12b30b741f0
+https://poshmark.com/listing/Cat-Jack-Blue-Waffle-Knit-Baby-Outfit-6ace42cf3945051ac0f52fad
+https://poshmark.com/listing/Cloud-Island-Newborn-Mint-Green-Christmas-Car-Tree-Sweatshirt-and-Jogger-Set-NWT-6ab79988731a092dc5ff046d
+https://poshmark.com/listing/Bunny-Carrot-Infant-Set-03-Month-695c9a3a850012ff2bbcde0a
+https://poshmark.com/listing/Cloud-Island-Baby-Gap-Boys-03m-612m-Blue-Gray-Sleeper-Overall-Romper-Bundle-6ab26ce31e28d349fa2e797b
+https://poshmark.com/listing/DinosaurOutfit-6a8ce82b014ea30d7ce003a2
+https://poshmark.com/listing/Splendid-NWT-Infant-Boy-Curious-Stripes-Henley-Set-Size-36mo-6aa4654d24cc8703e5778946
+https://poshmark.com/listing/Elephant-Striped-Kids-Set-Green-Gray-06-Months-6a8f64bb8cafcce120a22a2f
+https://poshmark.com/listing/Hanna-Andersson-Gray-Stripe-Wiggle-Set-Size-03m-680686647321b0702f77b10e
+https://poshmark.com/listing/Cat-n-JackGreen-Ribbed-Knit-Top-and-Shorts-Set-36M-695c784dfe4c68df96fd1201
+https://poshmark.com/listing/HM-Baby-Organic-Cotton-Waffle-Knit-Baby-Set-in-Rust-6a26465544ad4d41b77f1980
+https://poshmark.com/listing/Boy-3-Months-18-Months-bundle-clothes-Carter-First-Impressions-New-And-Used-6a8f2e09105c5866b40f44e4
+https://poshmark.com/listing/BabyGap-Peter-Rabbit-2-Piece-Set-Tshirt-and-Shorts-Set-Blue-Size-03-Months-6a99a7d3571a7e36a45c44f8
+https://poshmark.com/listing/Hello-Bello-Baby-Sloth-3Piece-Set-Bodysuit-Leggings-Hooded-Cardigan-03M-8-6ace47e36b7a0e4f4294a61f
+https://poshmark.com/listing/NWOT-Carters-Matching-Dino-Set-NB-6a85a1951179ac2386f5af2c
+https://poshmark.com/listing/Old-Navy-Waffle-Knit-Set-Kids-36M-Tan-Excellent-Henley-Thermal-Joggers-6aa71a1729572dd7e039bea5
+https://poshmark.com/listing/Carters-Just-One-You-Baby-Boy-Dinosaur-Bodysuit-and-Striped-Pants-Set-Sage-Green-6ac0d83f80cb0823bf36d5cc
+https://poshmark.com/listing/Rabbit-Bear-Infant-Sweat-Set-36-Month-695c988c49e17be98730a8bb
+https://poshmark.com/listing/NWT-Baby-GAP-Cozy-Gray-Kids-Two-Piece-Set-Size-03-months-69541f86bd4ce39809c53b2e
+https://poshmark.com/listing/Hanna-Andersson-Olive-Quilted-Overalls-with-Colorful-Patterned-Pullover-69b1cf47dc3b46097c4d485d
+https://poshmark.com/listing/NWOT-Grayson-Mini-Lighting-Bolt-Shorts-Set-03-M-698e3c939936d6bb6198ee59
+https://poshmark.com/listing/Old-Navy-Infant-Rust-Colored-Surf-Life-Tee-Shorts-6aaca8c4b3acded761436f0f
+https://poshmark.com/listing/Carters-Green-Dinosaur-Hoodie-Pants-Cream-Dino-Bodysuit-Set-69dd1c9021bd427458dc16f6
+https://poshmark.com/listing/White-Quilted-Baby-Outfit-Jacket-Pants-with-Baby-Animals-on-front-of-Jacket-6a398653954cbc2cc3f18fb3
+https://poshmark.com/listing/The-North-Face-Infant-Sun-Hat-Blue-Geo-Print-Size-624M-Chin-Tie-UPF-40-Brim-6aa6f664db9420f5e47039e7

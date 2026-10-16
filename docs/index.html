@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baby Registry</title>
+<meta name="description" content="Our baby registry: pre-loved finds from Poshmark and thredUP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍼</text></svg>">
+<style>
+  :root {
+    --bg: #fbf8f4;
+    --surface: #ffffff;
+    --ink: #2b2620;
+    --muted: #7a7066;
+    --line: #ebe4da;
+    --accent: #5b7f6e;
+    --accent-ink: #ffffff;
+    --chip: #f1ece4;
+    --posh: #7f0353;
+    --thred: #2e6b5a;
+    --warn-bg: #fdf1dc;
+    --warn-ink: #8a5a12;
+    --shadow: 0 1px 2px rgba(43,38,32,.05), 0 4px 16px rgba(43,38,32,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1816; --surface: #24211e; --ink: #f1ece6; --muted: #a89e94; --line: #36312c;
+      --accent: #8fb7a3; --accent-ink: #14201a; --chip: #2e2a26; --posh: #e48cc0; --thred: #86c7b2;
+      --warn-bg: #3a2f1c; --warn-ink: #f0c879; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1a1816; --surface: #24211e; --ink: #f1ece6; --muted: #a89e94; --line: #36312c;
+    --accent: #8fb7a3; --accent-ink: #14201a; --chip: #2e2a26; --posh: #e48cc0; --thred: #86c7b2;
+    --warn-bg: #3a2f1c; --warn-ink: #f0c879; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 Inter, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 48px 0 24px; text-align: center; }
+  h1 {
+    font-family: Fraunces, Georgia, serif; font-weight: 600; letter-spacing: -.01em;
+    font-size: clamp(32px, 6vw, 52px); line-height: 1.1; margin: 0 0 8px;
+  }
+  .sub { color: var(--muted); font-size: 17px; margin: 0; }
+  .note {
+    max-width: 640px; margin: 20px auto 0; padding: 14px 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 14px;
+    text-align: left;
+  }
+  .controls {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row + .row { margin-top: 8px; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; min-width: 0; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    border: 1px solid transparent; background: var(--chip); color: var(--ink);
+    padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .chip .n { opacity: .6; margin-left: 4px; font-weight: 400; }
+  select {
+    font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px;
+  }
+  .meta { color: var(--muted); font-size: 13px; margin-left: auto; }
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    padding-bottom: 64px;
+  }
+  @media (max-width: 520px) { .grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: var(--shadow); color: inherit; text-decoration: none;
+    transition: transform .15s ease;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .ph { position: relative; aspect-ratio: 1; background: var(--chip); }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .store {
+    position: absolute; top: 8px; left: 8px; font-size: 11px; font-weight: 600; letter-spacing: .02em;
+    background: var(--surface); padding: 3px 8px; border-radius: 999px;
+  }
+  .store.poshmark { color: var(--posh); }
+  .store.thredup { color: var(--thred); }
+  .badge {
+    position: absolute; bottom: 8px; left: 8px; right: 8px; text-align: center;
+    background: var(--warn-bg); color: var(--warn-ink); font-size: 12px; font-weight: 500;
+    padding: 4px 8px; border-radius: 8px;
+  }
+  .card.reserved img { opacity: .55; }
+  .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .brand { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .title {
+    font-weight: 500; font-size: 14px; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: auto; padding-top: 8px; gap: 8px; }
+  .price { font-weight: 600; font-size: 16px; }
+  .size { color: var(--muted); font-size: 12px; text-align: right; }
+  .empty { text-align: center; color: var(--muted); padding: 64px 0; grid-column: 1 / -1; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 0 40px; }
+  @media (max-width: 520px) {
+    header { padding-top: 32px; }
+    .body { padding: 10px; }
+    .title { font-size: 13px; }
+    .meta { width: 100%; margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1 id="title">Our Baby Registry</h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="note" id="note" hidden></div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="row"><div class="chips" id="sizes" role="group" aria-label="Filter by size"></div></div>
+    <div class="row">
+      <div class="chips" id="stores" role="group" aria-label="Filter by store" style="flex:0 1 auto"></div>
+      <select id="sort" aria-label="Sort">
+        <option value="new">Newest</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+      </select>
+      <span class="meta" id="meta"></span>
+    </div>
+  </div>
+</div>
+
+<main class="wrap"><div class="grid" id="grid"></div></main>
+<footer class="wrap" id="footer"></footer>
+
+<script>
+const SIZE_BUCKETS = [
+  ["Newborn", /newborn|\bnb\b|preemie/i],
+  ["0–3 months", /\b0\s*-\s*3\b/],
+  ["3–6 months", /\b3\s*-\s*6\b/],
+  ["6+ months", /\b(6\s*-\s*9|6\s*-\s*12|9\s*-\s*12|12|18|24)\b/],
+  ["One size", /one size|\bos\b/i],
+];
+const sizeBucket = s => (SIZE_BUCKETS.find(([, re]) => re.test(s || "")) || ["Other"])[0];
+const STORES = { poshmark: "Poshmark", thredup: "thredUP" };
+
+const state = { size: "All", store: "All", sort: "new" };
+try { const s = JSON.parse(localStorage.getItem("reg-filters") || "{}"); Object.assign(state, s); } catch {}
+const save = () => { try { localStorage.setItem("reg-filters", JSON.stringify(state)); } catch {} };
+
+let items = [];
+
+function ago(iso) {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 60) return `${Math.max(m, 1)} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 48) return `${h} hr ago`;
+  return `${Math.round(h / 24)} days ago`;
+}
+
+function chips(el, values, key, counts, allLabel) {
+  el.innerHTML = "";
+  for (const v of values) {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.setAttribute("aria-pressed", state[key] === v);
+    b.innerHTML = `${v === "All" ? allLabel : v}<span class="n">${counts[v] ?? 0}</span>`;
+    b.onclick = () => { state[key] = v; save(); render(); };
+    el.append(b);
+  }
+}
+
+function card(i) {
+  const a = document.createElement("a");
+  a.className = "card" + (i.status === "reserved" ? " reserved" : "");
+  a.href = i.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+  const store = STORES[i.source] || i.source;
+  const price = i.price != null ? `$${i.price % 1 ? i.price.toFixed(2) : i.price}` : "";
+  a.innerHTML = `
+    <div class="ph">
+      ${i.image ? `<img loading="lazy" referrerpolicy="no-referrer" alt="">` : ""}
+      <span class="store ${i.source}">${store}</span>
+      ${i.status === "reserved" ? `<span class="badge">In someone's cart — may free up</span>` : ""}
+    </div>
+    <div class="body">
+      <div class="brand"></div>
+      <div class="title"></div>
+      <div class="foot"><span class="price">${price}</span><span class="size"></span></div>
+    </div>`;
+  if (i.image) a.querySelector("img").src = i.image;
+  a.querySelector("img")?.setAttribute("alt", i.title);
+  a.querySelector(".brand").textContent = i.brand || "";
+  a.querySelector(".title").textContent = i.title;
+  a.querySelector(".size").textContent = i.size || "";
+  a.setAttribute("aria-label", `${i.title}, ${i.size || ""}, ${price} on ${store}`);
+  return a;
+}
+
+function render() {
+  const live = items.filter(i => i.status !== "gone");
+  const byStore = live.filter(i => state.store === "All" || STORES[i.source] === state.store);
+
+  const sizeCounts = { All: byStore.length };
+  byStore.forEach(i => sizeCounts[i.bucket] = (sizeCounts[i.bucket] || 0) + 1);
+  const sizeVals = ["All", ...SIZE_BUCKETS.map(b => b[0]), "Other"].filter(v => v === "All" || sizeCounts[v]);
+  if (!sizeVals.includes(state.size)) state.size = "All";
+  chips(document.getElementById("sizes"), sizeVals, "size", sizeCounts, "All sizes");
+
+  const storeCounts = { All: live.length };
+  live.forEach(i => { const s = STORES[i.source]; storeCounts[s] = (storeCounts[s] || 0) + 1; });
+  const storeVals = ["All", ...Object.values(STORES).filter(s => storeCounts[s])];
+  chips(document.getElementById("stores"), storeVals, "store", storeCounts, "All stores");
+
+  let shown = byStore.filter(i => state.size === "All" || i.bucket === state.size);
+  const rank = i => (i.status === "reserved" ? 1 : 0);
+  const cmp = {
+    new: (a, b) => (b.added || "").localeCompare(a.added || "") || a.order - b.order,
+    low: (a, b) => (a.price ?? 1e9) - (b.price ?? 1e9),
+    high: (a, b) => (b.price ?? -1) - (a.price ?? -1),
+  }[state.sort];
+  shown.sort((a, b) => rank(a) - rank(b) || cmp(a, b));
+
+  const grid = document.getElementById("grid");
+  grid.replaceChildren(...shown.map(card));
+  if (!shown.length) grid.innerHTML = `<p class="empty">Nothing here right now — try another size.</p>`;
+
+  document.getElementById("meta").textContent = `${shown.length} item${shown.length === 1 ? "" : "s"}`;
+}
+
+async function load() {
+  const bust = `?t=${Date.now()}`;
+  const [cfg, data] = await Promise.all([
+    fetch("config.json" + bust).then(r => r.json()).catch(() => ({})),
+    fetch("items.json" + bust).then(r => r.json()),
+  ]);
+  if (cfg.title) { document.getElementById("title").textContent = cfg.title; document.title = cfg.title; }
+  document.getElementById("subtitle").textContent = cfg.subtitle || "";
+  if (cfg.note) { const n = document.getElementById("note"); n.textContent = cfg.note; n.hidden = false; }
+  items = data.items.map(i => ({ ...i, bucket: sizeBucket(i.size) }));
+  document.getElementById("sort").value = state.sort;
+  document.getElementById("footer").textContent =
+    `Availability last checked ${ago(data.updated)}. Sold items are removed automatically.`;
+  render();
+}
+
+document.getElementById("sort").onchange = e => { state.sort = e.target.value; save(); render(); };
+load().catch(() => {
+  document.getElementById("grid").innerHTML = `<p class="empty">Couldn't load the registry. Please refresh.</p>`;
+});
+</script>
+</body>
+</html>

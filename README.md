@@ -11,8 +11,7 @@ Edit `links.txt` (works from the GitHub website or app: open the file → pencil
 - **Poshmark:** paste the listing link on its own line.
 - **thredUP:** nothing to do. Anything favorited on the shared wishlist shows up automatically.
 
-The page refreshes within a couple of minutes of saving `links.txt`, and every 30 minutes on its own
-(GitHub sometimes starts scheduled runs a few minutes late).
+The page refreshes within a couple of minutes of saving `links.txt`, and every 30 minutes on its own.
 
 ## Removing items
 
@@ -38,6 +37,11 @@ Settings → Secrets and variables → Actions. To change it, edit that secret, 
 
 ## If updates stop
 
+- **Check cron-job.org first.** It's what starts the update every 30 minutes (see "How it works").
+  Log in at console.cron-job.org → Cronjobs → "Baby registry refresh" → History. A **401** or **403** there
+  means the GitHub token was deleted or lost its permission: make a new one (below) and paste it into the
+  job's `Authorization` header as `Bearer <token>`.
+
 - **GitHub emails you when a run fails.** Check Actions → "Update registry" → the failed run → "Check every item".
   Lines starting with `WARN` show which links couldn't be read. Those items keep their last known status.
 - **GitHub pauses scheduled runs after 60 days with no commits.** The bot only commits when an item
@@ -49,8 +53,25 @@ Settings → Secrets and variables → Actions. To change it, edit that secret, 
 
 `update.py` reads each link, records title, photo, price, size and availability in `docs/items.json`,
 and `docs/index.html` displays everything that's still available. A GitHub Action
-(`.github/workflows/update.yml`) runs it every 30 minutes, commits `docs/items.json` when something
+(`.github/workflows/update.yml`) runs it, commits `docs/items.json` when something
 actually changed, adds the shipping address from the secret, and publishes `docs/` to GitHub Pages.
+
+### What starts the updates
+
+GitHub's own timer (`schedule:` in the workflow) is unreliable on free accounts: it often runs hours late
+or skips runs entirely. So a free [cron-job.org](https://cron-job.org) job ("Baby registry refresh") starts
+the workflow every 30 minutes through GitHub's API. GitHub's timer stays on as a backup.
+
+- **The job:** `POST https://api.github.com/repos/DanielLWalter/baby-registry/actions/workflows/update.yml/dispatches`
+  with body `{"ref":"main"}` and headers `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
+  `X-GitHub-Api-Version: 2026-03-10`, `Content-Type: application/json`. Success is a 2xx response.
+- **The token:** a GitHub fine-grained personal access token named "cron-job.org registry refresh"
+  (Settings → Developer settings → Fine-grained tokens), with access to only this repo and only the
+  **Actions: Read and write** permission. It can start this workflow and nothing else. It isn't stored anywhere
+  but cron-job.org, so to replace it, make a new one with the same settings and paste it into the job.
+- **API version:** GitHub has deprecated `2022-11-28` and stops accepting it on March 10, 2028. If the job starts
+  failing with a version error, change the `X-GitHub-Api-Version` header to the newest version listed at
+  docs.github.com/en/rest/about-the-rest-api/api-versions.
 
 Things that are easy to break:
 

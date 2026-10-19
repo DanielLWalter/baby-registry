@@ -50,6 +50,22 @@ jobs:
             git pull --rebase && git push
           fi
 
+      # The shipping address lives in the SHIP_TO repo secret (Settings → Secrets and
+      # variables → Actions) so it's on the published page but never in the repo.
+      - name: Add shipping address
+        env:
+          SHIP_TO: ${{ secrets.SHIP_TO }}
+        run: |
+          python - <<'EOF'
+          import json, os
+          addr = os.environ.get("SHIP_TO", "").strip()
+          if addr:
+              p = "docs/config.json"
+              c = json.load(open(p))
+              c["ship_to"] = addr
+              json.dump(c, open(p, "w"), indent=2, ensure_ascii=False)
+          EOF
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

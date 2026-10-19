@@ -20,6 +20,12 @@ The page refreshes within a couple of minutes of saving `links.txt`, and every 3
 
 Edit `docs/config.json`.
 
+## Changing the shipping address
+
+The address isn't stored in this repo. It's the `SHIP_TO` secret under
+Settings → Secrets and variables → Actions, and it's added to the page when it's published.
+After changing it, re-run the workflow (Actions → "Update registry" → Run workflow).
+
 ## How it works
 
 `update.py` reads each link, records title, photo, price, size and availability in `docs/items.json`,

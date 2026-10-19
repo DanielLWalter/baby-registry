@@ -148,9 +148,9 @@
 <script>
 const SIZE_BUCKETS = [
   ["Newborn", /newborn|\bnb\b|preemie/i],
-  ["0–3 months", /\b0\s*-\s*3\b/],
-  ["3–6 months", /\b3\s*-\s*6\b/],
-  ["6+ months", /\b(6\s*-\s*9|6\s*-\s*12|9\s*-\s*12|12|18|24)\b/],
+  ["0–3 months", /(?<!\d)0\s*-\s*3(?!\d)/],
+  ["3–6 months", /(?<!\d)3\s*-\s*6(?!\d)/],
+  ["6+ months", /(?<!\d)(6\s*-\s*9|6\s*-\s*12|9\s*-\s*12|12|18|24)(?!\d)/],
   ["One size", /one size|\bos\b/i],
 ];
 const sizeBucket = s => (SIZE_BUCKETS.find(([, re]) => re.test(s || "")) || ["Other"])[0];

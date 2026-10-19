@@ -23,7 +23,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      # Always start from the latest main (a queued run would otherwise start from the
+      # commit that triggered it and miss items.json updates from the run before it).
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:

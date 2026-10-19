@@ -79,7 +79,7 @@ def check_poshmark(url):
             return {"status": "gone"}
         ld = poshmark_state_listing(page) or {}
         err = ld.get("error") or {}
-        if ld.get("id"):
+        if posh_complete(ld):
             break
         if err.get("statusCode") in (404, 410):
             return {"status": "gone"}
@@ -92,7 +92,7 @@ def check_poshmark(url):
 
     # Primary source: the full listing record in the page's app state. Poshmark sometimes
     # leaves out the smaller schema.org block, so that's only a fallback.
-    if ld and ld.get("id"):
+    if posh_complete(ld):
         if lid and ld["id"] != lid:
             return {"status": "gone"}  # redirected somewhere else: listing removed
         inv = ld.get("inventory") or {}
@@ -130,6 +130,12 @@ def check_poshmark(url):
     }
 
 
+def posh_complete(ld):
+    """A listing record we can trust for a sold/available decision."""
+    return bool(ld.get("id") and not ld.get("error") and ld.get("status")
+                and (ld.get("inventory") or {}).get("status"))
+
+
 def poshmark_state_listing(page):
     marker = "window.__INITIAL_STATE__="
     i = page.find(marker)
@@ -145,10 +151,14 @@ def poshmark_state_listing(page):
 # ---------- thredUP ----------
 
 THREDUP_STATUS = {"InStock": "available", "Reserved": "reserved"}
+THREDUP_PAGE_SIZE = 120  # the shared-favorites page server-renders up to this many items
 
 
 def check_thredup_wishlist(url):
-    """Returns {id: item} for every item on a shared-favorites page."""
+    """Returns ({id: item}, complete) for the items on a shared-favorites page.
+
+    complete is False when the wishlist has more items than the page shows, so items
+    missing from this snapshot must not be treated as removed."""
     _, page = fetch(url)
     m = re.search(r'<script id="data-apollo"[^>]*>(.*?)</script>', page, re.S)
     if not m:
@@ -156,28 +166,34 @@ def check_thredup_wishlist(url):
     state = json.loads(m.group(1))
     root = state.get("ROOT_QUERY", {})
     conn = next((v for k, v in root.items() if k.startswith("sharedFavorites")), None)
-    if conn is None:
+    nodes = conn.get("nodes") if conn else None
+    if not isinstance(nodes, list):
         raise ValueError("wishlist not found on page")
+    total = conn.get("totalCount")
+    complete = not (conn.get("pageInfo") or {}).get("hasNextPage")
+    if complete and total is not None and total != len(nodes):
+        raise ValueError(f"wishlist page shows {len(nodes)} of {total} items")
     out = {}
-    for ref in conn.get("nodes", []):
-        it = state.get(ref.get("__ref", ""), {})
-        num = it.get("itemNumber")
+    for ref in nodes:
+        it = state.get((ref or {}).get("__ref", ""))
+        num = (it or {}).get("itemNumber")
         if not num:
-            continue
+            raise ValueError("wishlist item data missing from page")
         photos = it.get("photoIds") or []
         price = it.get("price")
         path = re.search(r'href="(/product/[^"]+/%s)"' % num, page)
         out[f"thredup:{num}"] = {
             "source": "thredup",
             "url": "https://www.thredup.com" + (path.group(1) if path else f"/product/{num}"),
-            "status": THREDUP_STATUS.get(it.get("availability"), "gone"),
+            # Missing availability = incomplete data: keep the last known status.
+            "status": THREDUP_STATUS.get(it["availability"], "gone") if it.get("availability") else None,
             "title": it.get("title") or "thredUP item",
             "brand": it.get("brand") or "",
             "image": f"https://cf-assets-thredup.thredup.com/assets/{photos[0]}/large.jpg" if photos else None,
             "price": float(price) if price else None,
             "size": it.get("sizeDisplay"),
         }
-    return out
+    return out, complete
 
 
 # ---------- main ----------
@@ -206,10 +222,18 @@ def main():
 
     for wl in wishlists:
         try:
-            for k, v in check_thredup_wishlist(wl).items():
+            found, complete = check_thredup_wishlist(wl)
+            for k, v in found.items():
                 v["from"] = wl
                 results[k] = v
                 order.append(k)
+            if not complete:
+                errors.append(f"thredUP wishlist {wl}: more than {THREDUP_PAGE_SIZE} items; "
+                              "only the first page was checked")
+                for k, v in prev.items():
+                    if v.get("from") == wl and k not in found:
+                        results[k] = None
+                        order.append(k)
         except Exception as e:
             errors.append(f"thredUP wishlist {wl}: {e}")
             # Keep whatever we knew from this wishlist last time.
@@ -247,6 +271,7 @@ def main():
             item = dict(old)
         else:
             item = {**old, **{kk: vv for kk, vv in new.items() if vv is not None or kk == "price"}}
+            item.setdefault("status", "unknown")
             item["checked"] = ts
         item["id"] = k
         item["order"] = n

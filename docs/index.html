@@ -63,6 +63,11 @@
   .ship { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
   .ship strong { display: block; font-size: 15px; margin-top: 2px; }
   .ship span { color: var(--muted); font-size: 13px; }
+  .ship button {
+    display: block; margin: 6px 0 4px; font: inherit; font-size: 14px; font-weight: 500;
+    color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px;
+    padding: 7px 14px; cursor: pointer;
+  }
   .controls {
     position: sticky; top: 0; z-index: 5; background: var(--bg);
     padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px;
@@ -256,13 +261,22 @@ async function load() {
   document.getElementById("subtitle").textContent = cfg.subtitle || "";
   const n = document.getElementById("note");
   if (cfg.note) { n.textContent = cfg.note; n.hidden = false; }
-  if (cfg.ship_to) {
+  // The address is published scrambled and only decoded when a guest taps the button,
+  // so crawlers, scrapers and link previews never see it in plain text.
+  if (cfg.ship_to_hidden) {
     const ship = document.createElement("div");
     ship.className = "ship";
     ship.append("Please ship gifts to:");
-    const addr = document.createElement("strong");
-    addr.textContent = cfg.ship_to;
-    ship.append(addr);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Show shipping address";
+    btn.onclick = () => {
+      const bytes = Uint8Array.from(atob(cfg.ship_to_hidden), c => c.charCodeAt(0)).reverse();
+      const addr = document.createElement("strong");
+      addr.textContent = new TextDecoder().decode(bytes);
+      btn.replaceWith(addr);
+    };
+    ship.append(btn);
     if (cfg.ship_note) { const sn = document.createElement("span"); sn.textContent = cfg.ship_note; ship.append(sn); }
     n.append(ship); n.hidden = false;
   }

@@ -57,12 +57,14 @@ jobs:
           SHIP_TO: ${{ secrets.SHIP_TO }}
         run: |
           python - <<'EOF'
-          import json, os
+          import base64, json, os
           addr = os.environ.get("SHIP_TO", "").strip()
           if addr:
               p = "docs/config.json"
               c = json.load(open(p))
-              c["ship_to"] = addr
+              # Scrambled (reversed + base64) so it isn't plain text in the published file;
+              # the page decodes it when a guest taps "Show shipping address".
+              c["ship_to_hidden"] = base64.b64encode(addr.encode()[::-1]).decode()
               json.dump(c, open(p, "w"), indent=2, ensure_ascii=False)
           EOF
 

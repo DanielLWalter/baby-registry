@@ -59,6 +59,9 @@
     background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 14px;
     text-align: left;
   }
+  .ship { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+  .ship strong { display: block; font-size: 15px; margin-top: 2px; }
+  .ship span { color: var(--muted); font-size: 13px; }
   .controls {
     position: sticky; top: 0; z-index: 5; background: var(--bg);
     padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px;
@@ -250,7 +253,18 @@ async function load() {
   ]);
   if (cfg.title) { document.getElementById("title").textContent = cfg.title; document.title = cfg.title; }
   document.getElementById("subtitle").textContent = cfg.subtitle || "";
-  if (cfg.note) { const n = document.getElementById("note"); n.textContent = cfg.note; n.hidden = false; }
+  const n = document.getElementById("note");
+  if (cfg.note) { n.textContent = cfg.note; n.hidden = false; }
+  if (cfg.ship_to) {
+    const ship = document.createElement("div");
+    ship.className = "ship";
+    ship.append("Please ship gifts to:");
+    const addr = document.createElement("strong");
+    addr.textContent = cfg.ship_to;
+    ship.append(addr);
+    if (cfg.ship_note) { const sn = document.createElement("span"); sn.textContent = cfg.ship_note; ship.append(sn); }
+    n.append(ship); n.hidden = false;
+  }
   items = data.items.map(i => ({ ...i, bucket: sizeBucket(i.size) }));
   document.getElementById("sort").value = state.sort;
   document.getElementById("footer").textContent =

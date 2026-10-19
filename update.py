@@ -70,36 +70,76 @@ def title_from_slug(url):
 
 def check_poshmark(url):
     lid = posh_id(url)
-    try:
-        final_url, page = fetch(url)
-    except NotFound:
-        return {"status": "gone"}
+    # Poshmark's backend intermittently times out but still serves a normal-looking page
+    # with an error record instead of the listing, so retry those a few times.
+    for attempt in range(4):
+        try:
+            _, page = fetch(url)
+        except NotFound:
+            return {"status": "gone"}
+        ld = poshmark_state_listing(page) or {}
+        err = ld.get("error") or {}
+        if ld.get("id"):
+            break
+        if err.get("statusCode") in (404, 410):
+            return {"status": "gone"}
+        time.sleep(3 * (attempt + 1))
+    else:
+        if not err and "ldjson-schema-listing" not in page:
+            raise ValueError("no listing data on page (blocked or layout changed?)")
+        if err:
+            raise ValueError(f"Poshmark error page: {err.get('statusCode')} {err.get('errorMessage')}")
+
+    # Primary source: the full listing record in the page's app state. Poshmark sometimes
+    # leaves out the smaller schema.org block, so that's only a fallback.
+    if ld and ld.get("id"):
+        if lid and ld["id"] != lid:
+            return {"status": "gone"}  # redirected somewhere else: listing removed
+        inv = ld.get("inventory") or {}
+        # Multi-size listings list every size; show the ones still in stock.
+        sizes = [(q.get("size_obj") or {}).get("display") for q in inv.get("size_quantities") or []
+                 if q.get("quantity_available", 1) > 0]
+        size = " / ".join(s for s in sizes if s) or (ld.get("size_obj") or {}).get("display") or ld.get("size")
+        price = (ld.get("price_amount") or {}).get("val")
+        return {
+            "status": "available" if ld.get("status") == "published" and inv.get("status") == "available" else "gone",
+            "title": html.unescape(ld.get("title") or title_from_slug(url)),
+            "brand": html.unescape(ld.get("brand") or ""),
+            "image": ld.get("picture_url"),
+            "price": float(price) if price else None,
+            "size": html.unescape(size) if size else None,
+        }
+
     m = re.search(r'data-vmid="ldjson-schema-listing"[^>]*>(.*?)</script>', page, re.S)
     if not m:
         raise ValueError("no listing data on page (blocked or layout changed?)")
     d = json.loads(m.group(1))
     if lid and d.get("productID") != lid:
-        return {"status": "gone"}  # redirected somewhere else: listing removed
+        return {"status": "gone"}
     offer = d.get("offers") or {}
-    in_stock = "InStock" in (offer.get("availability") or "")
-    # The listing's own size is the first one inside its "listingDetails" block of the page state.
-    size = None
-    inv = re.search(r'"listingDetails":\{"id":"%s".{0,8000}?"size_obj":\{[^}]*?"display":"([^"]*)"' % lid,
-                    page, re.S)
-    if inv:
-        size = html.unescape(inv.group(1))
     image = d.get("image")
     if isinstance(image, list):
         image = image[0] if image else None
     price = offer.get("price")
     return {
-        "status": "available" if in_stock else "gone",
+        "status": "available" if "InStock" in (offer.get("availability") or "") else "gone",
         "title": html.unescape(d.get("name") or title_from_slug(url)),
         "brand": html.unescape((d.get("brand") or {}).get("name") or ""),
         "image": image,
         "price": float(price) if price else None,
-        "size": size,
     }
+
+
+def poshmark_state_listing(page):
+    marker = "window.__INITIAL_STATE__="
+    i = page.find(marker)
+    if i < 0:
+        return None
+    try:
+        state, _ = json.JSONDecoder().raw_decode(page, i + len(marker))
+    except ValueError:
+        return None
+    return (state.get("$_listing_details") or {}).get("listingDetails")
 
 
 # ---------- thredUP ----------

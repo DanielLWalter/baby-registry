@@ -9,7 +9,7 @@ Edit `links.txt` (works from the GitHub website or app: open the file → pencil
 - **Poshmark:** paste the listing link on its own line.
 - **thredUP:** nothing to do. Anything favorited on the shared wishlist shows up automatically.
 
-The page refreshes within a couple of minutes of saving `links.txt`, and every 4 hours on its own.
+The page refreshes within a couple of minutes of saving `links.txt`, and every 30 minutes on its own.
 
 ## Removing items
 

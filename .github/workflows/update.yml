@@ -2,7 +2,7 @@ name: Update registry
 
 on:
   schedule:
-    - cron: "17 */4 * * *"   # every 4 hours
+    - cron: "7,37 * * * *"   # every 30 minutes (GitHub may start scheduled runs a few minutes late)
   push:
     branches: [main]
   workflow_dispatch:          # "Run workflow" button on GitHub
@@ -32,12 +32,16 @@ jobs:
       - name: Check every item
         run: python update.py
 
+      # Only commit when something real changed (an item sold, appeared, etc.), not just
+      # the "last checked" timestamps. The deployed page always gets the fresh file.
       - name: Save results
         run: |
           git config user.name "registry-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/items.json
-          if ! git diff --cached --quiet; then
+          strip='import json,sys; d=json.load(open(sys.argv[1])); d.pop("updated",None); [i.pop("checked",None) for i in d["items"]]; print(json.dumps(d,sort_keys=True))'
+          git show HEAD:docs/items.json > /tmp/old.json
+          if [ "$(python -c "$strip" /tmp/old.json)" != "$(python -c "$strip" docs/items.json)" ]; then
+            git add docs/items.json
             git commit -m "Update item availability"
             git pull --rebase && git push
           fi

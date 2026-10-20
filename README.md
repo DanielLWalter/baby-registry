@@ -12,7 +12,7 @@ Edit `links.txt` (works from the GitHub website or app: open the file → pencil
   checker swaps them for the full link. Anything that isn't a listing (a closet, a search) gets you an email.
 - **thredUP:** nothing to do. Anything favorited on the shared wishlist shows up automatically.
 
-The page refreshes within a couple of minutes of saving `links.txt`, and every 30 minutes on its own.
+The page refreshes within a couple of minutes of saving `links.txt`, and every hour on its own.
 
 ## Removing items
 
@@ -38,7 +38,7 @@ Settings → Secrets and variables → Actions. To change it, edit that secret, 
 
 ## If updates stop
 
-- **Check cron-job.org first.** It's what starts the update every 30 minutes (see "How it works").
+- **Check cron-job.org first.** It's what starts the update every hour (see "How it works").
   Log in at console.cron-job.org → Cronjobs → "Baby registry refresh" → History. A **401** or **403** there
   means the GitHub token was deleted or lost its permission: make a new one (below) and paste it into the
   job's `Authorization` header as `Bearer <token>`.
@@ -52,7 +52,7 @@ Settings → Secrets and variables → Actions. To change it, edit that secret, 
 
   The page still updates with whatever could be checked. Open the failed run on GitHub: the reason is at
   the top, and lines starting with `WARN` in "Check every item" say what went wrong for each link. You'll
-  get an email every 30 minutes until it's fixed.
+  get an email every hour until it's fixed.
 - **Items that can't be checked for a day disappear from the page,** since they may have sold in the
   meantime. They come back as soon as a check succeeds.
 - **GitHub switches workflows off after 60 days with no commits.** The bot commits an empty "Monthly check-in"
@@ -70,7 +70,7 @@ actually changed, adds the shipping address from the secret, and publishes `docs
 
 GitHub's own timer (`schedule:` in the workflow) is unreliable on free accounts: it often runs hours late
 or skips runs entirely. So a free [cron-job.org](https://cron-job.org) job ("Baby registry refresh") starts
-the workflow every 30 minutes through GitHub's API. GitHub's timer stays on as a backup.
+the workflow every hour through GitHub's API. GitHub's timer stays on as a backup.
 
 - **The job:** `POST https://api.github.com/repos/DanielLWalter/baby-registry/actions/workflows/update.yml/dispatches`
   with body `{"ref":"main"}` and headers `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,

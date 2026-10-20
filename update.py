@@ -227,6 +227,8 @@ def expand_short_links(problems):
             continue
         try:
             full = resolve(link)
+        except NotFound:
+            full, why = None, "that page doesn't exist"
         except Exception as e:
             full, why = None, e
         else:

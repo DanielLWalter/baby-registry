@@ -8,10 +8,15 @@ An item that's sold or unavailable is marked "gone" and hidden from the registry
 If a site can't be reached, the item keeps its last known status, so a temporary
 outage never wipes the registry.
 
+Exits non-zero (so GitHub emails a failure) when something needs a human: a link it
+can't read, a wishlist too big to check, or an item that hasn't been checked
+successfully for STALE_HOURS. items.json is still written first, so the page stays fresh.
+
 Standard library only, so it runs anywhere with Python 3.9+.
 """
 import html
 import json
+import os
 import re
 import sys
 import time
@@ -152,6 +157,7 @@ def poshmark_state_listing(page):
 
 THREDUP_STATUS = {"InStock": "available", "Reserved": "reserved"}
 THREDUP_PAGE_SIZE = 120  # the shared-favorites page server-renders up to this many items
+STALE_HOURS = 6          # complain when a shown item hasn't been checked successfully for this long
 
 
 def check_thredup_wishlist(url):
@@ -196,13 +202,56 @@ def check_thredup_wishlist(url):
     return out, complete
 
 
+# ---------- short links ----------
+
+def known(link):
+    return "thredup.com/fv/" in link or ("poshmark.com/listing/" in link and posh_id(link))
+
+
+def resolve(link):
+    """Follow a share link (e.g. posh.mk/...) to the Poshmark listing it points to, or None."""
+    # Only trust where the link redirects to. Listing links found in the page could be
+    # anything (a closet page links to dozens of other listings).
+    final, _ = fetch(link)
+    final = re.split(r"[?#]", final)[0]
+    return final if known(final) else None
+
+
+def expand_short_links(problems):
+    """Replace share links in links.txt with the full listing links they point to."""
+    lines = LINKS.read_text().splitlines()
+    changed = False
+    for n, line in enumerate(lines):
+        link = line.strip()
+        if not link or link.startswith("#") or known(link):
+            continue
+        try:
+            full = resolve(link)
+        except Exception as e:
+            full, why = None, e
+        else:
+            why = "it doesn't lead to a Poshmark listing"
+        if full:
+            print(f"expanded {link} -> {full}")
+            lines[n] = full
+            changed = True
+        else:
+            problems.append(f"links.txt: can't use {link} ({why}). "
+                            "Paste the full poshmark.com/listing/... link instead.")
+    if changed:
+        LINKS.write_text("\n".join(lines) + "\n")
+
+
 # ---------- main ----------
 
 def main():
+    problems = []  # things a human needs to fix; any of these fails the run
+    expand_short_links(problems)
+
     links = []
     for line in LINKS.read_text().splitlines():
         line = line.strip()
-        if line and not line.startswith("#") and line not in links:
+        if line and not line.startswith("#") and known(line) and line not in links:
             links.append(line)
 
     prev = {}
@@ -215,10 +264,7 @@ def main():
     errors = []
 
     wishlists = [l for l in links if "thredup.com/fv/" in l]
-    posh = [l for l in links if "poshmark.com/listing/" in l]
-    other = [l for l in links if l not in wishlists and l not in posh]
-    for l in other:
-        errors.append(f"skipped (not a Poshmark listing or thredUP wishlist): {l}")
+    posh = [l for l in links if l not in wishlists]
 
     for wl in wishlists:
         try:
@@ -228,8 +274,8 @@ def main():
                 results[k] = v
                 order.append(k)
             if not complete:
-                errors.append(f"thredUP wishlist {wl}: more than {THREDUP_PAGE_SIZE} items; "
-                              "only the first page was checked")
+                problems.append(f"thredUP wishlist has more than {THREDUP_PAGE_SIZE} items; "
+                                f"only the first {THREDUP_PAGE_SIZE} are checked, so new favorites won't show up")
                 for k, v in prev.items():
                     if v.get("from") == wl and k not in found:
                         results[k] = None
@@ -289,10 +335,22 @@ def main():
     changed = [i for i in items if i.get("status_since") == ts and i["id"] in prev]
     for i in changed:
         print(f"  now {i['status']}: {i['title']}")
+    # One failed check is usually a hiccup; hours of them means a site is blocking us,
+    # changed its layout, or a link went bad. (The page hides these after a day.)
+    cutoff = datetime.fromisoformat(ts).timestamp() - STALE_HOURS * 3600
+    stale = [i for i in items if i["status"] != "gone"
+             and datetime.fromisoformat(i.get("checked") or i["added"]).timestamp() < cutoff]
+    if stale:
+        problems.append(f"{len(stale)} item(s) haven't been checked successfully in over {STALE_HOURS} hours "
+                        "(the WARN lines say why): " + " ".join(i["url"] for i in stale[:5])
+                        + (" ..." if len(stale) > 5 else ""))
+
     for e in errors:
         print("WARN", e, file=sys.stderr)
-    # Fail loudly only if nothing at all could be checked (likely blocked).
-    if errors and all(results.get(k) is None for k in order):
+    for p in problems:
+        # ::error:: shows the message on the run's summary page on GitHub.
+        print(("::error::" if os.environ.get("GITHUB_ACTIONS") else "PROBLEM: ") + p, file=sys.stderr)
+    if problems:
         sys.exit(1)
 
 

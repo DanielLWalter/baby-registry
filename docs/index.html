@@ -221,7 +221,10 @@ function card(i) {
 }
 
 function render() {
-  const live = items.filter(i => i.status !== "gone");
+  // Hide anything not confirmed available in the last day: if checks keep failing,
+  // it may have sold in the meantime.
+  const fresh = i => i.checked && Date.now() - Date.parse(i.checked) < 24 * 3600e3;
+  const live = items.filter(i => i.status !== "gone" && fresh(i));
   const byStore = live.filter(i => state.store === "All" || STORES[i.source] === state.store);
 
   const sizeCounts = { All: byStore.length };

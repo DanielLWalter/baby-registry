@@ -8,7 +8,8 @@ A registry page for secondhand finds on Poshmark and thredUP. Sold items drop of
 
 Edit `links.txt` (works from the GitHub website or app: open the file → pencil icon → commit):
 
-- **Poshmark:** paste the listing link on its own line.
+- **Poshmark:** paste the listing link on its own line. Short share links (`posh.mk/...`) work too; the
+  checker swaps them for the full link. Anything that isn't a listing (a closet, a search) gets you an email.
 - **thredUP:** nothing to do. Anything favorited on the shared wishlist shows up automatically.
 
 The page refreshes within a couple of minutes of saving `links.txt`, and every 30 minutes on its own.
@@ -42,12 +43,21 @@ Settings → Secrets and variables → Actions. To change it, edit that secret, 
   means the GitHub token was deleted or lost its permission: make a new one (below) and paste it into the
   job's `Authorization` header as `Bearer <token>`.
 
-- **GitHub emails you when a run fails.** Check Actions → "Update registry" → the failed run → "Check every item".
-  Lines starting with `WARN` show which links couldn't be read. Those items keep their last known status.
-- **GitHub pauses scheduled runs after 60 days with no commits.** The bot only commits when an item
-  changes, so a quiet stretch can trigger this. To restart: Actions → "Update registry" → "Enable workflow".
-- **If every item fails,** Poshmark or thredUP has probably changed their page layout or started blocking
-  the checker, and `update.py` needs updating.
+- **GitHub emails you when a run fails,** and a run fails whenever something needs fixing:
+  - a line in `links.txt` that isn't a Poshmark listing or thredUP wishlist,
+  - the thredUP wishlist growing past 120 items (only the first 120 get checked),
+  - any item that hasn't been checked successfully for 6 hours. One failed check is usually a hiccup and
+    gets no email; 6 hours of them means a link went bad, or Poshmark or thredUP changed their pages or
+    started blocking the checker (if it's every item from one store, it's that).
+
+  The page still updates with whatever could be checked. Open the failed run on GitHub: the reason is at
+  the top, and lines starting with `WARN` in "Check every item" say what went wrong for each link. You'll
+  get an email every 30 minutes until it's fixed.
+- **Items that can't be checked for a day disappear from the page,** since they may have sold in the
+  meantime. They come back as soon as a check succeeds.
+- **GitHub switches workflows off after 60 days with no commits.** The bot commits an empty "Monthly check-in"
+  if nothing else has been committed in 30 days, so this shouldn't happen. If it does: Actions →
+  "Update registry" → "Enable workflow".
 
 ## How it works
 
@@ -75,8 +85,9 @@ the workflow every 30 minutes through GitHub's API. GitHub's timer stays on as a
 
 Things that are easy to break:
 
-- **Failed checks never remove items.** If a site can't be reached, or returns incomplete data, items keep
+- **Failed checks never mark items sold.** If a site can't be reached, or returns incomplete data, items keep
   their last known status. An item is only marked gone when the store clearly says it's sold or removed.
+  (The page does hide items that haven't been confirmed for a day; see "If updates stop".)
 - **Poshmark** sometimes returns a normal-looking page carrying a 504 error instead of the listing.
   `update.py` retries those.
 - **thredUP** product pages block automated requests, so all thredUP data comes from the shared-wishlist page.

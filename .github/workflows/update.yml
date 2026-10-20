@@ -33,11 +33,16 @@ jobs:
         with:
           python-version: "3.12"
 
+      # A failure here means something needs a human (see the WARN/error lines). Carry on
+      # so the page still gets whatever was checked, and fail the run at the very end.
       - name: Check every item
+        id: check
+        continue-on-error: true
         run: python update.py
 
       # Only commit when something real changed (an item sold, appeared, etc.), not just
       # the "last checked" timestamps. The deployed page always gets the fresh file.
+      # links.txt changes when update.py expands a share link (posh.mk/...) to the full one.
       - name: Save results
         run: |
           git config user.name "registry-bot"
@@ -46,7 +51,17 @@ jobs:
           git show HEAD:docs/items.json > /tmp/old.json
           if [ "$(python -c "$strip" /tmp/old.json)" != "$(python -c "$strip" docs/items.json)" ]; then
             git add docs/items.json
+          fi
+          git add links.txt
+          if ! git diff --cached --quiet; then
             git commit -m "Update item availability"
+          fi
+          # GitHub switches workflows off after 60 days without a commit. Quiet stretches are
+          # normal here, so check in once a month.
+          if [ $(( $(date +%s) - $(git log -1 --format=%ct) )) -gt $(( 30 * 86400 )) ]; then
+            git commit --allow-empty -m "Monthly check-in (keeps GitHub from pausing updates)"
+          fi
+          if [ "$(git rev-list --count origin/main..HEAD)" -gt 0 ]; then
             git pull --rebase && git push
           fi
 
@@ -74,3 +89,9 @@ jobs:
           path: docs
       - id: deploy
         uses: actions/deploy-pages@v4
+
+      - name: Report problems
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::error::The registry needs attention. Open the \"Check every item\" step above for details."
+          exit 1

@@ -1,5 +1,7 @@
 # Baby registry
 
+> **Moved (2026-10-23):** this project now lives in `~/Documents/Code/baby reg` (was `~/Desktop/baby reg`).
+
 A registry page for secondhand finds on Poshmark and thredUP. Sold items drop off on their own.
 
 **Live site:** https://daniellwalter.github.io/baby-registry/

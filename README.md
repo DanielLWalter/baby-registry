@@ -21,6 +21,13 @@ The page refreshes within a couple of minutes of saving `links.txt`, and every h
 - Sold or unavailable items disappear automatically at the next check.
 - To remove one by hand, delete its line from `links.txt`, or un-favorite it on thredUP.
 
+## Everyday essentials (diapers, formula, doula…)
+
+Things that don't sell out live in the `needs` list in `docs/config.json` and are always shown above
+the pre-loved items. Each entry takes `title`, and optionally `detail`, `price` (free text, e.g.
+`"$28 a can"`), `url` (makes the card a "Buy it here" link), and either `image` (a photo URL) or `icon`
+(an emoji). They're never checked or removed automatically; delete an entry to take it off.
+
 ## Changing the title or welcome note
 
 Edit `docs/config.json`.

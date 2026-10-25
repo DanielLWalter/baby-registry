@@ -68,6 +68,30 @@
     color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 999px;
     padding: 7px 14px; cursor: pointer;
   }
+  .needs { padding: 8px 16px 28px; }
+  .needs h2 {
+    font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 24px; margin: 0 0 4px;
+  }
+  .needs > p { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .needs-list { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  @media (max-width: 520px) { .needs-list { grid-template-columns: 1fr; } }
+  .need {
+    display: flex; gap: 14px; align-items: flex-start; padding: 14px; border-radius: 16px;
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+    color: inherit; text-decoration: none;
+  }
+  a.need { transition: transform .15s ease; }
+  a.need:hover { transform: translateY(-2px); }
+  .need .pic {
+    flex: none; width: 64px; height: 64px; border-radius: 12px; background: var(--chip);
+    display: grid; place-items: center; font-size: 30px; overflow: hidden;
+  }
+  .need .pic img { width: 100%; height: 100%; object-fit: cover; }
+  .need .txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .need .t { font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .need .d { color: var(--muted); font-size: 13px; }
+  .need .p { font-weight: 600; font-size: 14px; margin-top: 2px; }
+  .need .go { color: var(--accent); font-size: 13px; font-weight: 500; }
   .controls {
     position: sticky; top: 0; z-index: 5; background: var(--bg);
     padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 20px;
@@ -138,6 +162,12 @@
   <p class="sub" id="subtitle"></p>
   <div class="note" id="note" hidden></div>
 </header>
+
+<section class="wrap needs" id="needs" hidden>
+  <h2 id="needs-title"></h2>
+  <p>These don't sell out, so they stay on the list.</p>
+  <div class="needs-list" id="needs-list"></div>
+</section>
 
 <div class="controls">
   <div class="wrap">
@@ -254,6 +284,31 @@ function render() {
   document.getElementById("meta").textContent = `${shown.length} item${shown.length === 1 ? "" : "s"}`;
 }
 
+// Hand-picked essentials from config.json: always shown, never checked for availability.
+function renderNeeds(cfg) {
+  if (!cfg.needs?.length) return;
+  document.getElementById("needs-title").textContent = cfg.needs_title || "Everyday essentials";
+  document.getElementById("needs-list").replaceChildren(...cfg.needs.map(n => {
+    const el = document.createElement(n.url ? "a" : "div");
+    el.className = "need";
+    if (n.url) { el.href = n.url; el.target = "_blank"; el.rel = "noopener noreferrer"; }
+    el.innerHTML = `<div class="pic"></div>
+      <div class="txt"><div class="t"></div><div class="d"></div><div class="p"></div>
+      ${n.url ? `<span class="go">Buy it here ↗</span>` : ""}</div>`;
+    const pic = el.querySelector(".pic");
+    if (n.image) {
+      const img = document.createElement("img");
+      img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.alt = ""; img.src = n.image;
+      pic.append(img);
+    } else pic.textContent = n.icon || "🍼";
+    el.querySelector(".t").textContent = n.title;
+    el.querySelector(".d").textContent = n.detail || "";
+    el.querySelector(".p").textContent = n.price || "";
+    return el;
+  }));
+  document.getElementById("needs").hidden = false;
+}
+
 async function load() {
   const bust = `?t=${Date.now()}`;
   const [cfg, data] = await Promise.all([
@@ -283,6 +338,7 @@ async function load() {
     if (cfg.ship_note) { const sn = document.createElement("span"); sn.textContent = cfg.ship_note; ship.append(sn); }
     n.append(ship); n.hidden = false;
   }
+  renderNeeds(cfg);
   items = data.items.map(i => ({ ...i, bucket: sizeBucket(i.size) }));
   document.getElementById("sort").value = state.sort;
   document.getElementById("footer").textContent =

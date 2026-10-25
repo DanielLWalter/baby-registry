@@ -286,15 +286,16 @@ function render() {
 
 // Hand-picked essentials from config.json: always shown, never checked for availability.
 function renderNeeds(cfg) {
-  if (!cfg.needs?.length) return;
+  const needs = (cfg.needs || []).filter(n => !n.hidden);
+  if (!needs.length) return;
   document.getElementById("needs-title").textContent = cfg.needs_title || "Everyday essentials";
-  document.getElementById("needs-list").replaceChildren(...cfg.needs.map(n => {
+  document.getElementById("needs-list").replaceChildren(...needs.map(n => {
     const el = document.createElement(n.url ? "a" : "div");
     el.className = "need";
     if (n.url) { el.href = n.url; el.target = "_blank"; el.rel = "noopener noreferrer"; }
     el.innerHTML = `<div class="pic"></div>
       <div class="txt"><div class="t"></div><div class="d"></div><div class="p"></div>
-      ${n.url ? `<span class="go">Buy it here ↗</span>` : ""}</div>`;
+      ${n.url ? `<span class="go"></span>` : ""}</div>`;
     const pic = el.querySelector(".pic");
     if (n.image) {
       const img = document.createElement("img");
@@ -304,6 +305,7 @@ function renderNeeds(cfg) {
     el.querySelector(".t").textContent = n.title;
     el.querySelector(".d").textContent = n.detail || "";
     el.querySelector(".p").textContent = n.price || "";
+    if (n.url) el.querySelector(".go").textContent = `${n.link_label || "Buy it here"} ↗`;
     return el;
   }));
   document.getElementById("needs").hidden = false;

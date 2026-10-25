@@ -8,20 +8,24 @@
     {
       "icon": "🧷",
       "title": "Diapers",
-      "detail": "Sizes Newborn and 0–3 months, fragrance free. Preferred brands: Huggies Little Snugglers, Pampers Swaddlers, Coterie, or Millie Moon."
+      "detail": "Sizes Newborn and 0–3 months, fragrance free. Preferred brands: Huggies Little Snugglers, Pampers Swaddlers, Coterie, or Millie Moon.",
+      "hidden": true
     },
     {
       "title": "Bobbie Organic Whole Milk Infant Formula",
       "detail": "10 cans",
       "price": "$28 a can",
       "url": "https://www.hibobbie.com/products/organic-whole-milk-infant-formula?variant=41025582760021",
-      "image": "https://www.hibobbie.com/cdn/shop/files/OWM-Blue-1_Can-PDP.jpg?v=1762300383"
+      "image": "https://www.hibobbie.com/cdn/shop/files/OWM-Blue-1_Can-PDP.jpg?v=1762300383",
+      "hidden": true
     },
     {
       "icon": "🌙",
       "title": "A night with our postpartum doula",
-      "detail": "Help us get some sleep in those first weeks. Reach out to Emily or Danny to gift a night.",
-      "price": "$320 a night"
+      "detail": "Help us get some sleep in those first weeks. Gift a night, or chip in toward one, on Venmo.",
+      "price": "$320 a night",
+      "url": "https://venmo.com/u/danielwalter86",
+      "link_label": "Venmo @danielwalter86"
     }
   ]
 }

@@ -26,7 +26,8 @@ The page refreshes within a couple of minutes of saving `links.txt`, and every h
 Things that don't sell out live in the `needs` list in `docs/config.json` and are always shown above
 the pre-loved items. Each entry takes `title`, and optionally `detail`, `price` (free text, e.g.
 `"$28 a can"`), `url` (makes the card a "Buy it here" link), and either `image` (a photo URL) or `icon`
-(an emoji). They're never checked or removed automatically; delete an entry to take it off.
+(an emoji). `link_label` changes the link text. Add `"hidden": true` to keep an entry in the file
+but off the page. They're never checked or removed automatically; delete an entry to take it off.
 
 ## Changing the title or welcome note
 

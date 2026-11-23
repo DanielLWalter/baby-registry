@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url }}
     steps:
       # Always start from the latest main (a queued run would otherwise start from the
       # commit that triggered it and miss items.json updates from the run before it).
@@ -87,7 +87,16 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs
+      # GitHub sometimes can't find the artifact uploaded a moment earlier ("Found 0
+      # artifact(s)") and the deploy fails. When that happens, wait and try once more.
       - id: deploy
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Wait before retrying deploy
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 30
+      - id: deploy_retry
+        if: steps.deploy.outcome == 'failure'
         uses: actions/deploy-pages@v4
 
       - name: Report problems

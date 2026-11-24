@@ -13,8 +13,10 @@ Handoff for the next session. See README.md for how everything works.
 ## Deploy retry (2026-11-23)
 
 - Runs were failing several times a day at the Pages deploy step: "Found 0 artifact(s)" right after a
-  successful upload (a GitHub-side timing glitch, worse since Nov 21). The workflow now waits 30s and
-  retries the deploy once. If failures continue, check whether they're the retry failing too.
+  successful upload (a GitHub-side timing glitch, worse since Nov 21). The workflow now retries the
+  deploy: wait 30s, try again, wait 90s, try a third time. One retry rescued the 22:00 and 23:00 runs,
+  but at 00:00 on Nov 24 the retry then hit a GitHub 502, so a third attempt was added.
+  If failures continue, check which attempt fails and with what error.
 
 ## Open ideas (not requested yet)
 
